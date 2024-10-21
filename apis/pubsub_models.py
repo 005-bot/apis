@@ -16,16 +16,18 @@ class Outage:
             "address": self.address,
             "dates": self.dates,
         }
-    
-    def to_json(self)->str:
+
+    def to_json(self) -> str:
         return json.dumps(self.to_dict())
-    
+
     @classmethod
-    def from_json(cls, json):
-        dict = json.loads(json)
+    def from_json(cls, j: str | bytes):
+        if isinstance(j, bytes):
+            j = j.decode("utf-8")
+        d = json.loads(j)
         return cls(
-            area=dict["area"],
-            organization=dict["organization"],
-            address=dict["address"],
-            dates=dict["dates"],
+            area=d["area"],
+            organization=d["organization"],
+            address=d["address"],
+            dates=d["dates"],
         )
