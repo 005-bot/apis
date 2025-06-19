@@ -1,33 +1,56 @@
-from dataclasses import dataclass
-import json
+import datetime
+
+from pydantic import BaseModel, computed_field
+from typing_extensions import deprecated
+
+from .i18n import format_date_ru
+from .models import OrganizationInfo, OutageDetails
 
 
-@dataclass(frozen=True, slots=True)
-class Outage:
+class Outage(BaseModel):
+    """Model representing an outage event.
+
+    Attributes:
+        area (str): The area affected by the outage.
+        organization_info (OrganizationInfo): Information about the organization responsible for the outage.
+        details (OutageDetails): Detailed information about the outage, including affected streets and reasons.
+        period (list[datetime.datetime]): List of datetime objects representing the outage period.
+    """
+
     area: str
-    organization: str
-    address: str
-    dates: str
+    organization_info: OrganizationInfo
+    details: OutageDetails
+    period: list[datetime.datetime]
 
-    def to_dict(self):
-        return {
-            "area": self.area,
-            "organization": self.organization,
-            "address": self.address,
-            "dates": self.dates,
-        }
+    @computed_field
+    @property
+    @deprecated("Use `organization_info` instead")
+    def organization(self) -> str:
+        """Deprecated property. Use `organization_info` instead.
 
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict())
+        Returns:
+            str: String representation of the organization information.
+        """
+        return str(self.organization_info)
 
-    @classmethod
-    def from_json(cls, j: str | bytes):
-        if isinstance(j, bytes):
-            j = j.decode("utf-8")
-        d = json.loads(j)
-        return cls(
-            area=d["area"],
-            organization=d["organization"],
-            address=d["address"],
-            dates=d["dates"],
-        )
+    @computed_field
+    @property
+    @deprecated("Use `details` instead")
+    def address(self) -> str:
+        """Deprecated property. Use `details` instead.
+
+        Returns:
+            str: String representation of the outage details.
+        """
+        return str(self.details)
+
+    @computed_field
+    @property
+    @deprecated("Use `period` instead")
+    def dates(self) -> str:
+        """Deprecated method. Use `period` instead.
+
+        Returns:
+            str: String representation of the outage period dates.
+        """
+        return " ".join([format_date_ru(date) for date in self.period])
