@@ -9,5 +9,5 @@ setup(
     install_requires=[
         "pydantic",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.11",
 )
