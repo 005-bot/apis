@@ -14,6 +14,7 @@ class ResourceType(str, enum.Enum):
     HOT_WATER = "Горячее водоснабжение"
     ELECTRICITY = "Электроснабжение"
     GAS = "Газоснабжение"
+    HEATING = "Теплоснабжение"
 
 
 @dataclass(frozen=True)
